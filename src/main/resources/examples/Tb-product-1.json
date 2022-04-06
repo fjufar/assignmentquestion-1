@@ -1,0 +1,18 @@
+[
+{
+  "id": 101,
+   "product_name":"dell",
+   "description":"laptop",
+   "video_url":"www.dell.com",
+   "catagorey_id":12,
+   "price":3400
+},
+{
+  "id": 201,
+   "product_name":"toshiba",
+   "description":"laptop",
+   "video_url":"www.dtoshiba.com",
+   "catagorey_id":121,
+   "price":4400
+}
+]

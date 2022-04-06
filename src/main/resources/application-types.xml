@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="tb-product" format="json">
+      <types:shape format="weave" example="examples/Tb-product.json"><![CDATA[%dw 2.0
+
+type tb_product = Array<{|  id: Number {"typeId": "int"},   product_name: String,   description: String,   video_url: String,   catagorey_id: Number {"typeId": "int"},   price: Number {"typeId": "int"}|}> {"example": "[{\\\"id\\\":101,\\\"product_name\\\":\\\"dell\\\",\\\"description\\\":\\\"laptop\\\",\\\"video_url\\\":\\\"www.dell.com\\\",\\\"catagorey_id\\\":12,\\\"price\\\":3400},{\\\"id\\\":201,\\\"product_name\\\":\\\"toshiba\\\",\\\"description\\\":\\\"laptop\\\",\\\"video_url\\\":\\\"www.dtoshiba.com\\\",\\\"catagorey_id\\\":121,\\\"price\\\":4400}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="haile" format="json">
+      <types:shape format="weave" example="examples/Tb-product-1.json"><![CDATA[%dw 2.0
+
+type haile = Array<{|  id: Number {"typeId": "int"},   product_name: String,   description: String,   video_url: String,   catagorey_id: Number {"typeId": "int"},   price: Number {"typeId": "int"}|}> {"example": "[{\\\"id\\\":101,\\\"product_name\\\":\\\"dell\\\",\\\"description\\\":\\\"laptop\\\",\\\"video_url\\\":\\\"www.dell.com\\\",\\\"catagorey_id\\\":12,\\\"price\\\":3400},{\\\"id\\\":201,\\\"product_name\\\":\\\"toshiba\\\",\\\"description\\\":\\\"laptop\\\",\\\"video_url\\\":\\\"www.dtoshiba.com\\\",\\\"catagorey_id\\\":121,\\\"price\\\":4400}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#1a277fd8-d03a-4cab-8a93-6f1b232766a6">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="tb-product"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#896ed425-49f8-41b5-9543-1020a61b3f2d">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="haile"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

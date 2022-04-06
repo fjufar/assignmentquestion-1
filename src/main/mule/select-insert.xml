@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="c4a0626e-abde-4b86-a152-05c7bd1eea03" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="sakila" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="a6f92ada-dfcd-4632-b87f-87b60a00e71d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="select-insertFlow" doc:id="e6d33e7a-ac92-4589-acbe-0e4c943f8f5f" >
+		<http:listener doc:name="Listener" doc:id="13a0af85-46f2-4350-9f2f-9debcf2f4867" path="/select-insert" config-ref="HTTP_Listener_config1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="eb2e1848-b9cc-4a04-afa8-979cdd354b25" message="start logger"/>
+		<db:select doc:name="Select" doc:id="11895304-9dd5-4be5-884a-741125d22252" config-ref="Database_Config1">
+			<db:sql ><![CDATA[SELECT * FROM mulesoftdbf.tb_product;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="1a277fd8-d03a-4cab-8a93-6f1b232766a6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	id: payload01.id,
+	product_name: payload01.product_name,
+	description: payload01.description,
+	video_url: payload01.video_url,
+	catagorey_id: payload01.catagorey_id,
+	price: payload01.price
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload filter((value, index) -&gt; value.price &gt;5000)]" doc:name="Set Payload" doc:id="9f596aa9-a5bc-4c3f-a1aa-b31be292b587" />
+		<db:bulk-insert doc:name="Bulk insert" doc:id="2d27c6c8-a883-4577-99bd-59713ca6b682" config-ref="Database_Config1">
+			<db:sql><![CDATA[insert  into local.tb_product(id, product_name, description, video_url ,catagorey_id, price)
+values(:id, :product_name, :description, :video_url, :catagorey_id, :price);]]></db:sql>
+		</db:bulk-insert>
+		<logger level="INFO" doc:name="Logger" doc:id="2e1e4c97-f23f-4227-8965-f3a4f66bf8cb" message="inserted" />
+	</flow>
+</mule>
